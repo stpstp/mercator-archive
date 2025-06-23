@@ -17,7 +17,7 @@ MELCHIORS : relocate to IvS
 marvel (whenever we will have real data...)
 
 ## Description of HERMES 1D merged/stitched spectra
-1D merged object spectrum. Cosmic-clipped, logarithmic rebinned, barycentric velocity corrected
+1D merged object spectrum. Cosmic-clipped, logarithmic rebinned, barycentric velocity corrected \
 
 No.    Name      Ver    Type      Cards   Dimensions   Format                                
   0  PRIMARY       1 PrimaryHDU     507   (167781,)   float64                                   
