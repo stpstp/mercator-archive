@@ -10,4 +10,5 @@ hermes: 1D merged/stitched spectra
 
 ### Future plans
 melchior 
+
 marvel (whenever we will have real data...)
