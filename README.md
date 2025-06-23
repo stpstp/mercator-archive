@@ -16,7 +16,7 @@ marvel (whenever we will have real data...)
 ## Description of HERMES 1D merged/stitched spectra
 1D merged object spectrum. Cosmic-clipped, logarithmic rebinned, barycentric velocity corrected
 
-Example: subset of FITS header from 01140316_HRF_OBJ_ext_CosmicsRemoved_log_merged_c.fits
+Example: subset of FITS header cards from 01140316_HRF_OBJ_ext_CosmicsRemoved_log_merged_c.fits
 
 
 SIMPLE  =                    T / conforms to FITS standard                      
