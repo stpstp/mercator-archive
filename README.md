@@ -40,6 +40,7 @@ EXPTIME =                   35 / Exposure time
 
 OBJECT  = 'HD 82106'           / Object name                                                           
 EQUINOX =               2000.0 / Equinox of coordinates                         
-RADECSYS= 'FK5     '           / Coordinate system
-RA      =            142.47833 / [deg] Right ascension                          
-DEC     =              5.65514 / [deg] Declination                
+RADECSYS= 'FK5     '           / Coordinate system                                  
+RA      =            142.47833 / [deg] Right ascension                                                   
+DEC     =              5.65514 / [deg] Declination                           
+
