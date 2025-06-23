@@ -16,11 +16,11 @@ projects, you'll still have to read documentation... -->
     if at all possible -->
   <meta name="subject">%keywords; repeat the element as needed%</meta>
 
-  <meta name="creator">%authors in the format Last, F.I; Next, A.%</meta>
+  <meta name="creator">Prins, S.;Dirickx, M.</meta>
   <meta name="instrument">HERMES ()</meta>
   <meta name="facility">Mercator Telescope</meta>
 
-  <meta name="source">%ideally, a bibcode%</meta>
+  <meta name="source">2011A%26A...526A..69R</meta>
   <meta name="contentLevel">Research</meta>
   <meta name="type">Catalog</meta>  <!-- or Archive, Survey, Simulation -->
 
@@ -39,7 +39,7 @@ projects, you'll still have to read documentation... -->
       See also http://docs.g-vo.org/DaCHS/tutorial.html#stc
     -->
     <stc>
-      Position ICRS "ra" "dec"
+      Position FK5 "ra" "dec"
     </stc>
 
     <!-- id is mandatory for SCS; you can use a different type if you
