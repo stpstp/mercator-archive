@@ -1,0 +1,16 @@
+publisher: Mercator Observatory
+contact.name: Hi there
+contact.address: Roque de los Muchachos Observatory, La Palma
+contact.email: it@mercator.iac.es
+creator.name: Creative person nr1
+keywords: Spectroscopy
+keywords: Virtual observatories
+creator.logo: \getConfig{web}{serverURL}/favicon.png
+
+_noresultwarning: Your query did not match any data.
+
+authority.creationDate: 2025-06-19T08:43:14
+authority.shortName: MercatorKUL
+
+site.description: Mercator Observatory Data Archive
+
