@@ -6,9 +6,7 @@ Configuration for online VO-compliant data archive for the Mercator Observatory.
 
 
 ## Data products to be included
-HERMES: 1D merged/stitched spectra No.    Name      Ver    Type      Cards   Dimensions   Format \
-  0  PRIMARY       1 PrimaryHDU     507   (167781,)   float64   \
-  1  INSTRUMENTCONFIG.XML    1 BinTableHDU     11   191R x 1C   [1020A]   
+HERMES: 1D merged/stitched spectra 
 
 
 ### Future plans
@@ -17,7 +15,7 @@ MELCHIORS : relocate to IvS
 marvel (whenever we will have real data...)
 
 ## Description of HERMES 1D merged/stitched spectra
-1D merged object spectrum. Cosmic-clipped, logarithmic rebinned, barycentric velocity corrected \
+1D merged object spectrum. Cosmic-clipped, logarithmic rebinned, barycentric velocity corrected 
 
 No.    Name      Ver    Type      Cards   Dimensions   Format                                
   0  PRIMARY       1 PrimaryHDU     507   (167781,)   float64                                   
