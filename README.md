@@ -2,7 +2,7 @@
 Data archive for the Mercator Observatory
 
 ##
-Configuration for online VO-compliant data archive for the Mercator Observatory using gavo DaCHs.
+Configuration for online data archive for the Mercator Observatory using gavo DaCHs.
 
 
 ## Data products to be included
