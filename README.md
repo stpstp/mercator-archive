@@ -34,7 +34,9 @@ EXTEND  =                    T
 
 CRPIX1  =                  1.0 / merge                                          CRVAL1  =    8.233001142676553 / merge                                          
 CDELT1  = 5.20050525665283E-06 / merge                                          
-CTYPE1  = 'log(wavelength)'    / merge        
+CTYPE1  = 'log(wavelength)'    / merge    
+
+UNSEQ   =              1140316 / Unique sequence number    
 
 DATE-OBS= '2025-06-01T21:04:17.546854' / Start of observation                   
 DATE-END= '2025-06-01T21:04:52.549361' / End of observation                     
