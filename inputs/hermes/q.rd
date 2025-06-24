@@ -1,14 +1,7 @@
-<!-- A template for a simple DaCHS cone search service metadata;
-To fill it out, search and replace %.*%
-
-Note that this doesn't expose all features of DaCHS.  For advanced
-projects, you'll still have to read documentation... -->
-
-
 <resource schema="hermes" resdir=".">
-  <meta name="creationDate">2025-06-13T11:19:30Z</meta>
+	<meta name="creationDate">2025-06-24T09:45:29Z</meta>
 
-  <meta name="title">HERMES Data Archive</meta>
+	<meta name="title">HERMES Data Archive</meta>
   <meta name="description"> A test collection of HERMES spectra
   </meta>
   <!-- Take keywords from
@@ -20,7 +13,7 @@ projects, you'll still have to read documentation... -->
   <meta name="instrument">HERMES ()</meta>
   <meta name="facility">Mercator Telescope</meta>
 
-  <meta name="source">2011A%26A...526A..69R</meta>
+  <meta name="source">2011A&amp;A...526A..69R</meta>
   <meta name="contentLevel">Research</meta>
   <meta name="type">Catalog</meta>  <!-- or Archive, Survey, Simulation -->
 
@@ -28,106 +21,287 @@ projects, you'll still have to read documentation... -->
       Infrared, Optical, UV, EUV, X-ray, Gamma-ray, can be repeated -->
   <meta name="coverage.waveband">Optical</meta>
 
-  <table id="main" onDisk="True" mixin="//scs#q3cindex" adql="True">
-    <!-- if you don't have a unique identifier, create one; SCS requires
-      that no two rows have the same id -->
-    <primary>id</primary>
+	<meta name="ssap.dataSource">pointed</meta>
+	<meta name="ssap.creationType">archival</meta>
 
-    <!-- Add more STC information as appropriate.  For instance:
-      Position ICRS Epoch J2015.0 "ra" "dec" Error "ra_error" "dec_error"
+	<!-- in case you serve anything but a spectrum, see
+	http://www.ivoa.net/rdf/dataproduct_type
+	for what terms you can use here; you can have more than one productType -->
+	<meta name="productType">spectrum</meta>
+	<meta name="ssap.testQuery">MAXREC=1</meta>
 
-      See also http://docs.g-vo.org/DaCHS/tutorial.html#stc
-    -->
-    <stc>
-      Position FK5 "ra" "dec"
-    </stc>
+	<table id="raw_data" onDisk="True" adql="hidden"
+			namePath="//ssap#instance">
+		<!-- the table with your custom metadata; it is transformed
+			to something palatable for SSA using the view below -->
 
-    <!-- id is mandatory for SCS; you can use a different type if you
-      want, DaCHS will turn it into string on output (as required by
-      by SCS -->
-    <column name="id" type="integer"
-      ucd="meta.id;meta.main"
-      tablehead="Id"
-      description="Main identifier for this object."
-      verbLevel="1"/>
-    <column name="ra" type="double precision"
-      unit="deg" ucd="pos.eq.ra;meta.main"
-      tablehead="RA"
-      description="ICRS right ascension for this object.
-        %add more info, like epoch and such%"
-      verbLevel="1"/>
-    <column name="dec" type="double precision"
-      unit="deg" ucd="pos.eq.dec;meta.main"
-      tablehead="Dec"
-      description="ICRS declination for this object.
-        %add more info, like epoch and such%"
-      verbLevel="1"/>
-    %add further columns%
-  </table>
+		<!-- for an explanation of what columns will be defined in the
+		final view, see http://docs.g-vo.org/DaCHS/ref.html#the-ssap-view-mixin.
 
-  <coverage>
-    <updater sourceTable="main"/>
-  </coverage>
+		Don't mention anything constant here; fill it in in the view
+		definition.
+		-->
+		<LOOP listItems="ssa_dateObs ssa_dstitle ssa_targname ssa_timeExt
+			ssa_specstart ssa_specend">
+			<events>
+				<column original="\item"/>
+			</events>
+		</LOOP>
 
-  <data id="import">
-    <sources pattern="%resdir-relative pattern, like data/*.txt%"/>
+		<column name="unique_seqno" type="integer" required="True"
+			ucd="meta.id"
+			tablehead="Unique Seqno"
+			description="The unique sequence number for this observation,
+				counting every exposure made with this instrument; this
+				remains constant over multiple versions of the same file."/>
 
-    <!-- the grammar really depends on your input material.  See
-      http://docs.g-vo.org/DaCHS/ref.html#grammars-available,
-      in particular columnGrammar, csvGrammar, fitsTableGrammar,
-      and reGrammar; if nothing else helps see embeddedGrammar
-      or customGrammar -->
-    <csvGrammar names="identifier ra dec mag"/>
+		<mixin>//products#table</mixin>
+		<mixin>//ssap#plainlocation</mixin>
+		<mixin>//ssap#simpleCoverage</mixin>
+		<FEED source="//scs#splitPosIndex"
+			columns="ssa_location"
+			long="degrees(long(ssa_location))"
+			lat="degrees(lat(ssa_location))"/>
 
-    <make table="main">
-      <rowmaker idmaps="*">
-        <!-- the following example assumes you'll have to
-        cut off the first two chars from what's in the source
-        to get the identifier for your table -->
-        <map dest="id">int(@identifier[2:])</map>
-      </rowmaker>
-    </make>
-  </data>
+		<column name="datalink" type="text"
+			tablehead="Datalink"
+			description="A link to a datalink document for this spectrum."
+			verbLevel="15" displayHint="type=url">
+			<property name="targetType"
+			 >application/x-votable+xml;content=datalink</property>
+			<property name="targetTitle">Datalink</property>
+		</column>
 
-  <service id="cone" allowed="form,scs.xml">
-    <meta name="shortName">%max. 16 characters%</meta>
-    <meta name="testQuery">
-      <meta name="ra">%an RA of a position returning at least 1 object%</meta>
-      <meta name="dec">%a Dec of a position returning at least 1 object%</meta>
-      <meta name="sr">%search radius that returns at least 1 object%</meta>
-    </meta>
+	</table>
 
-    <!-- the browser interface goes to the VO and the front page -->
-    <publish render="form" sets="ivo_managed, local"/>
-    <!-- the SCS service isn't usable with a browser, so it goes to
-      the VO only -->
-    <publish render="scs.xml" sets="ivo_managed"/>
-    <!-- all publish elements only become active after you run
-      dachs pub q -->
+	<data id="import">
+		<recreateAfter>make_view</recreateAfter>
+		<property key="previewDir">previews</property>
+		<sources recurse="True"
+			pattern="data/*.fits"/>
 
-    <scsCore queriedTable="main">
-      <FEED source="//scs#coreDescs"/>
-      <!-- to enable other query parameters, something like
-        <condDesc buildFrom="colname"/> should usually be enough. -->
-    </scsCore>
-  </service>
+		<fitsProdGrammar qnd="True">
+			<rowfilter procDef="//products#define">
+				<bind key="table">"\schema.raw_data"</bind>
+				<bind key="path">\fullDLURL{sdl}</bind>
+				<bind key="fsize">2000000</bind>
+				<bind key="datalink">"\rdId#sdl"</bind>
+				<bind key="mime">"application/x-votable+xml"</bind>
+				<bind key="preview">\standardPreviewPath</bind>
+				<bind key="preview_mime">"image/png"</bind>
+			</rowfilter>
+		</fitsProdGrammar>
 
-  <regSuite title="hermes regression">
-    <regTest title="hermes SCS serves some data">
-      <url RA="%ra that returns exactly one row%"
-          DEC="%dec that returns exactly one row%" SR="0.001"
-        >cone/scs.xml</url>
-      <code>
-        # The actual assertions are pyUnit-like.  Obviously, you want to
-        # remove the print statement once you've worked out what to test
-        # against.
-        row = self.getFirstVOTableRow()
-        print(row)
-        self.assertAlmostEqual(row["ra"], 22.22222)
-      </code>
-    </regTest>
+		<make table="raw_data">
+			<rowmaker idmaps="*">
+				<var key="specAx">getWCSAxis(@header_, 1)</var>
 
-    <!-- add more tests: extra tests for the web side, custom widgets,
-      rendered outputFields... -->
-  </regSuite>
+				<apply procDef="//ssap#fill-plainlocation">
+					<bind key="ra">@RA</bind>
+					<bind key="dec">@DEC</bind>
+					<bind key="aperture">2.5/3600</bind>
+				</apply>
+
+				<map key="ssa_dateObs">@BJD-stc.JD_MJD</map>
+				<map key="ssa_dstitle">"{} {}".format("HERMES", @OBJECT)</map>
+				<map key="ssa_targname">@OBJECT</map>
+				<map key="ssa_specstart">math.exp(@specAx.pixToPhys(1))*1e-10</map>
+				<map key="ssa_specend"
+						>math.exp(@specAx.pixToPhys(@specAx.axisLength))*1e-10</map>
+				<map key="ssa_timeExt">@EXPTIME</map>
+
+				<map key="datalink">\dlMetaURI{sdl}</map>
+
+				<map key="unique_seqno">@UNSEQ</map>
+			</rowmaker>
+		</make>
+	</data>
+
+	<table id="data" onDisk="True" adql="True">
+			<meta name="_associatedDatalinkService">
+			<meta name="serviceId">sdl</meta>
+			<meta name="idColumn">ssa_pubDID</meta>
+		</meta>
+
+		<mixin
+			sourcetable="raw_data"
+			copiedcolumns="*"
+			ssa_fluxunit="''"
+			ssa_spectralunit="'Angstrom'"
+			ssa_bandpass="'Optical'"
+			ssa_collection="'HERMES'"
+			ssa_fluxcalib="'RELATIVE'"
+			ssa_fluxucd="'phot.flux.density;em.wl'"
+			ssa_speccalib="'ABSOLUTE'"
+			ssa_spectralucd="'em.wl'"
+			ssa_targclass="'star'"
+			ssa_aperture="2.5/3600"
+		>//ssap#view</mixin>
+
+<!--		<mixin
+			calibLevel="2"
+			coverage="ssa_region"
+			sResolution="ssa_spaceres"
+			oUCD="ssa_fluxucd"
+			emUCD="ssa_spectralucd"
+			>//obscore#publishSSAPMIXC</mixin> -->
+	</table>
+
+	<data id="make_view" auto="False">
+		<make table="data"/>
+	</data>
+
+	<coverage>
+		<updater sourceTable="data"/>
+	</coverage>
+
+	<!-- This is the table definition *for a single spectrum* as used
+		by datalink.  If you have per-bin errors or whatever else, just
+		add columns as above. -->
+	<table id="instance" onDisk="False">
+		<mixin ssaTable="data"
+			spectralDescription="Wavelength"
+			fluxDescription="Merged and deblazed flux"
+			>//ssap#sdm-instance</mixin>
+		<meta name="description">Merged Echelle Orders</meta>
+	</table>
+
+	<data id="build_spectrum">
+		<embeddedGrammar>
+			<iterator>
+				<setup imports="gavo.protocols.products,gavo.utils.pyfits"/>
+				<code>
+					fitsPath = base.getConfig("inputsDir") / self.sourceToken["accref"]
+					
+					hdus = pyfits.open(fitsPath)
+					ax = utils.getWCSAxis(hdus[0].header, 1)
+
+					for spec, flux in enumerate(hdus[0].data):
+					  yield {"spectral": math.exp(ax.pix0ToPhys(spec)), "flux": flux}
+					hdus.close()
+				</code>
+			</iterator>
+		</embeddedGrammar>
+		<make table="instance">
+			<parmaker>
+				<apply procDef="//ssap#feedSSAToSDM"/>
+			</parmaker>
+		</make>
+	</data>
+
+	<service id="sdl" allowed="dlget,dlmeta,static">
+		<meta name="title">\schema Datalink Service</meta>
+		<property name="staticData">data</property>
+		<datalinkCore>
+			<descriptorGenerator procDef="//soda#sdm_genDesc">
+				<bind key="ssaTD">"\rdId#data"</bind>
+			</descriptorGenerator>
+			<dataFunction procDef="//soda#sdm_genData">
+				<bind key="builder">"\rdId#build_spectrum"</bind>
+			</dataFunction>
+			<FEED source="//soda#sdm_plainfluxcalib"/>
+			<FEED source="//soda#sdm_cutout"/>
+			<FEED source="//soda#sdm_format"/>
+
+	 		<metaMaker semantics="#progenitor">
+				<code>
+					if descriptor.pubDID is None:
+						return
+					yield descriptor.makeLinkFromFile(
+						base.getConfig("inputsDir") / descriptor.accref,
+						description="Spectrum as the original 1D array")
+				</code>
+			</metaMaker>
+
+		</datalinkCore>
+	</service>
+
+	<!-- a form-based service – this is made totally separate from the
+	SSA part because grinding down SSA to something human-consumable and
+	still working as SSA is non-trivial -->
+	<service id="web" defaultRenderer="form">
+		<meta name="shortName">\schema Web</meta>
+		<meta name="title">\schema Spectra Web Search</meta>
+
+		<dbCore queriedTable="data">
+			<condDesc buildFrom="ssa_location"/>
+			<condDesc buildFrom="ssa_dateObs"/>
+			<!-- add further condDescs in this pattern; if you have useful target
+			names, you'll probably want to index them and say:
+
+			<condDesc>
+				<inputKey original="data.ssa_targname" tablehead="Standard Stars">
+					<values fromdb="ssa_targname from \schema.data
+						order by ssa_targname"/>
+				</inputKey>
+			</condDesc> -->
+		</dbCore>
+
+		<outputTable>
+			<autoCols>accref, mime, ssa_targname,
+				ssa_dateObs, datalink</autoCols>
+			<FEED source="//ssap#atomicCoords"/>
+			<outputField original="ssa_specstart" displayHint="spectralUnit=Angstrom"/>
+			<outputField original="ssa_specend" displayHint="spectralUnit=Angstrom"/>
+		</outputTable>
+	</service>
+
+
+	<service id="ssa" allowed="form,ssap.xml">
+		<meta name="shortName">\schema SSAP</meta>
+		<meta name="ssap.complianceLevel">full</meta>
+
+		<publish render="ssap.xml" sets="ivo_managed"/>
+		<publish render="form" sets="ivo_managed,local" service="web"/>
+
+		<ssapCore queriedTable="data">
+			<property key="previews">auto</property>
+			<FEED source="//ssap#hcd_condDescs"/>
+		</ssapCore>
+	</service>
+
+	<regSuite title="hermes regression">
+		<!-- see http://docs.g-vo.org/DaCHS/ref.html#regression-testing
+			for more info on these. -->
+
+		<regTest title="hermes SSAP serves some data">
+			<url REQUEST="queryData" PUBDID="%a value you have in ssa_pubDID%"
+				>ssa/ssap.xml</url>
+			<code>
+				<!-- to figure out some good strings to use here, run
+					dachs test -k SSAP -D tmp.xml q
+					and look at tmp.xml -->
+				self.assertHasStrings(
+					"%some characteristic string returned by the query%",
+					"%another characteristic string returned by the query%")
+			</code>
+		</regTest>
+
+		<regTest title="hermes Datalink metadata looks about right.">
+			<url ID="%a value you have in ssa_pubDID%"
+				>sdl/dlmeta</url>
+			<code>
+				<!-- to figure out good items to test here, you probably want to
+					dachs test -k datalink  q
+					and pprint the by_sem dict -->
+					by_sem = self.datalinkBySemantics()
+					print(by_sem)
+					self.fail("Fill this in")
+			</code>
+		</regTest>
+
+		<regTest title="hermes delivers some data.">
+			<url ID="%a value you have in ssa_pubDID%"
+				>sdl/dlget</url>
+			<code>
+				<!-- to figure out some good strings to use here, run
+					dachs test -k "delivers data" -D tmp.xml q
+					and look at tmp.xml -->
+				self.assertHasStrings(
+					"%some characteristic string in the datalink meta%")
+			</code>
+		</regTest>
+
+		<!-- add more tests: form-based service renders custom widgets, etc. -->
+	</regSuite>
 </resource>
