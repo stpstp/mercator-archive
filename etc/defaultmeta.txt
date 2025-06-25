@@ -1,7 +1,7 @@
 publisher: Mercator Observatory
 contact.name: Hi there
 contact.address: Roque de los Muchachos Observatory, La Palma
-contact.email: it@mercator.iac.es
+contact.email: archive@mercator.iac.es
 creator.name: Creative person nr1 
 keywords: Spectroscopy
 keywords: Virtual observatories
