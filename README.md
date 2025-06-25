@@ -1,5 +1,5 @@
 # mercator-archive
-Data archive for the Mercator Observatory
+Data archive for the Mercator Observatory, test 25-06
 
 ##
 Configuration for online data archive for the Mercator Observatory using gavo DaCHs.
